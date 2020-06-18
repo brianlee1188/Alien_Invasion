@@ -29,4 +29,3 @@ class Alien(Sprite):
 	def blitme(self):
 		self.screen.blit(self.image, self.rect) #describe what is drawn on screen and the two parameters is whats being drawn and coordindates
 		
-sdsddsds
