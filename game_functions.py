@@ -4,6 +4,7 @@ import sys
 from bullet import Bullet
 from alien import Alien
 from time import sleep
+import json
 
 def check_keydown_events(event, stats, ship, ai_settings, screen, bullets, aliens, sb): #parameter bullets have to come at the end as its dependent on screen and ai_settings
 	"""when the key is pressed"""
@@ -14,6 +15,9 @@ def check_keydown_events(event, stats, ship, ai_settings, screen, bullets, alien
 	elif event.key == pygame.K_SPACE:
 		fire_bullet(ai_settings, screen, ship, bullets)
 	elif event.key == pygame.K_q:
+		filename = 'high_score.json'
+		with open(filename, 'w') as f_obj:
+			json.dump(stats.high_score, f_obj)
 		sys.exit()
 	elif event.key == pygame.K_p:
 		if not stats.game_active:
@@ -39,6 +43,9 @@ def check_events(ai_settings, screen, stats, play_button, ship, bullets, aliens,
 	"""Watch for keyboard and mouse events"""
 	for event in pygame.event.get(): #this line specifies where event comes from hence the method does not include the event parameter
 		if event.type == pygame.QUIT:
+			filename = 'high_score.json'
+			with open(filename, 'w') as f_obj:
+				json.dump(stats.high_score, f_obj)
 			sys.exit()
 			
 		elif event.type == pygame.KEYDOWN:
@@ -103,7 +110,8 @@ def check_high_score(stats, sb):
 	if stats.score > stats.high_score:
 		stats.high_score = stats.score
 		sb.prep_high_score()
-	
+
+		
 				
 #IMPORTANT, THE PARAMETER ORDER SHOULD MATCH THE OPERATION ORDER INSIDE IN, OTHERWISE WE WILL GET ATTRIBUTE ERROR
 def update_screen(ai_settings, screen, stats, ship, aliens, bullets, play_button, sb): #the last parameter here is not neccessarily to change as it is only the name, it will be the same if it is zoro instead when applied tihs function to alien_invasion
