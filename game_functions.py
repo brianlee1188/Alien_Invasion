@@ -69,15 +69,9 @@ def start_game(stats, bullets, ai_settings, screen, aliens, ship, sb):
 	stats.reset_stats()
 	stats.game_active = True
 	
-	sb.prep_score()# we are updating the score images after we have reset the stats
-	sb.prep_high_score()# not here that the high score is not in reset but in init(), so this stats wont get reset
-	sb.prep_level()
-	sb.prep_ships()
-		
-	aliens.empty()
-	bullets.empty()
-	create_fleet(ai_settings, screen, aliens, ship)
-	ship.center_ship()	
+	sb.prep_images()# we are updating the score images after we have reset the stats
+	
+	refresh_screen(bullets, ai_settings, screen, aliens, ship)
 
 def update_bullets(ai_settings, screen, ship, aliens, bullets, stats, sb): #need the group parameter bullets
 	#these are moved from the alien_invasion.py 
@@ -99,12 +93,16 @@ def check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets, st
 		check_high_score(stats, sb)
 		
 	if len(aliens) == 0:
-		bullets.empty()
-		ai_settings.increase_speed()
-		stats.level += 1
-		sb.prep_level() # create the image and update it 
+		start_new_level(bullets, ai_settings, stats, sb, screen, aliens, ship)
+
+def start_new_level(bullets, ai_settings, stats, sb, screen, aliens, ship):
+	bullets.empty()
+	ai_settings.increase_speed()
+	stats.level += 1
+	sb.prep_level() # create the image and update it 
 		
-		create_fleet(ai_settings, screen, aliens, ship)
+	create_fleet(ai_settings, screen, aliens, ship)
+	
 
 def check_high_score(stats, sb):
 	if stats.score > stats.high_score:
@@ -151,10 +149,7 @@ def ship_hit(ai_settings, stats, screen, ship, aliens, bullets, sb):
 	if stats.ships_left > 0:
 		stats.ships_left -= 1
 		sb.prep_ships()
-		aliens.empty()
-		bullets.empty()
-		create_fleet(ai_settings, screen, aliens, ship)
-		ship.center_ship()	
+		refresh_screen(bullets, ai_settings, screen, aliens, ship)
 		sleep(0.5)
 	
 	else:
@@ -167,7 +162,14 @@ def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets, sb):
 		if alien.rect.bottom >= screen_rect.bottom:
 			ship_hit(ai_settings, stats, screen, ship, aliens, bullets, sb)
 			break
-
+			
+def refresh_screen(bullets, ai_settings, screen, aliens, ship):
+	aliens.empty()
+	bullets.empty()
+	create_fleet(ai_settings, screen, aliens, ship)
+	ship.center_ship()	
+	
+	
 def update_aliens(ai_settings, stats, screen, ship, aliens, bullets, sb):
 	check_fleet_edges(ai_settings, aliens)
 	aliens.update() #aliens instead of alien here because aliens is a group that contains all instance of alien class which have the alien class attribute.
